@@ -155,3 +155,48 @@ if (typeof u === 'number') {
         }
     }
 }
+{
+    // array
+    let x1 = [1, 2]
+    x1.push(3)
+    // x1.push("a") // error!
+
+    let x2 = [1, "2"] // x2 = (string|number)[]
+    x2.push(1)
+    x2.push("3")
+    // x2.push(true) // ng
+
+    function gen() {
+        let a = []
+        a.push(true)
+        a.push("2")
+        return a
+    }
+    let a = gen()
+    a.push(true)
+    // a.push(1) // errrors
+}
+{
+    let x: [string, number] = ["a", 1]
+    x = ["x", 2]
+    // x = ["x", "a"] // error
+
+    let x2: [string, ...number[]] = ["a"]
+    x2 = ["b", 2]
+    x2 = ["b", 2, 3, 4, 5]
+    // x2 = ["b", 2, 3, 4, 5, "a"] // error
+
+    let x3: [string, number?] = ["z"]
+    x3 = ["x", 3]
+    // x3 = ["x", 3, 4] // error
+}
+{
+    const x = [1, 2, 3]
+    // x = [3, 4, 5]// 再割当てはできない
+    x.push(1) // 要素の追加はできる
+
+    let xx: readonly number[] = [1, 2, 3]
+    // xx.push(1) // push は存在しない
+    let x3 = xx.map(x => x * 3)
+    let x4 = xx.concat(xx)
+}
