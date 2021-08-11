@@ -409,5 +409,61 @@ if (typeof u === 'number') {
     }
     console.log(doFunc(1, v => v.toString()))
     console.log(doFunc<number, string>(1, v => v.toString()))
+
+    type Container<T> = {
+        item: T[]
+        name: string
+    }
+    let c: Container<string | number> = {
+        item: ["a", 2],
+        name: "a"
+    }
+    function showContainer<T>(c: Container<T>) {
+
+    }
+    type DefaultContainer<T = string> = {
+        item: T[]
+        name: string
+    }
+
+    type Shape = {
+        area: number
+    }
+
+    type Circle = Shape & {
+        radius: number
+    }
+
+    type Triangle = Shape & {
+        sideA: number
+        sideB: number
+        sideC: number
+    }
+
+    function half<T extends Shape>(s: T): T {
+        return {
+            ...s,
+            area: s.area / 2
+        }
+    }
+
+    let ss: Shape = { area: 100 }
+    let cc: Circle = { area: 100, radius: 2 }
+    let tt: Triangle = { area: 100, sideA: 100, sideB: 10, sideC: 40 }
+
+    let hss: Shape = half(ss)
+    console.log(hss)
+    let hcc: Shape = half(cc)
+    console.log(hcc)
+    let htt: Shape = half(tt)
+    console.log(htt)
+
+
+    function doValiableParams<T extends unknown[], R>(f: (...args: T) => R, ...args: T): R {
+        return f(...args)
+    }
+    console.log(doValiableParams(() => "s"))
+    // console.log(doValiableParams(() => "s", 1)) // 第二引数は指定
+    console.log(doValiableParams((...args: number[]) => args.length, 1, 2, 3, 4, 5))
 }
 
