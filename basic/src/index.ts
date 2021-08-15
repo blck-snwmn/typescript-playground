@@ -466,4 +466,31 @@ if (typeof u === 'number') {
     // console.log(doValiableParams(() => "s", 1)) // 第二引数は指定
     console.log(doValiableParams((...args: number[]) => args.length, 1, 2, 3, 4, 5))
 }
+{
+    class Foo {
+        private constructor(private arg: string) { }
+    }
+    // class FooFoo extends Foo{} // コンストラクタがprivate
+    // new Foo{} //  new もできない
+}
+{
+    type Creator = {
+        typ: string
+    }
 
+    class Wood implements Creator {
+        typ = "wood"
+    }
+    class Fish implements Creator {
+        typ = "fish"
+    }
+
+    let Creator = {
+        create(typ: 'wood' | 'fish'): Creator {
+            switch (typ) {
+                case 'wood': return new Wood
+                case 'fish': return new Fish
+            }
+        }
+    }
+}
