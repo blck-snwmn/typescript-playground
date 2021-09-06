@@ -494,3 +494,112 @@ if (typeof u === 'number') {
         }
     }
 }
+{
+    {
+        //  (number | {
+        //     x: number;
+        // })[]
+        let x1 = [1, { x: 1 }]
+
+        // const アサーションを用いることで、型
+        // readonly [1, {
+        //     readonly x: 1;
+        // }]
+        let x2 = [1, { x: 1 }] as const
+    }
+    {
+        // excess property checking
+        type Input = {
+            left: string
+            rigth?: string
+        }
+        class Executor {
+            constructor(private input: Input) { }
+        }
+
+        // ok
+        new Executor({
+            left: "x",
+            rigth: "y"
+        })
+
+        // ng
+        // new Executor({
+        //     left: "x",
+        //     rigthx: "y"
+        // })
+
+        // ok
+        // type assertion があるので、チェックされない
+        new Executor({
+            left: "x",
+            rigthx: "y"
+        } as Input)
+
+
+        // ok
+        // 変数割当がされているので、チェックされない
+        let i = {
+            left: "x",
+            rigthx: "y"
+        }
+        new Executor(i)
+
+        // ng
+        // 変数へ割当されているが、型指定があるため、
+        // 変数割当時に、excess property checking の対象となり、NG
+        // let ii: Input = {
+        //     left: "x",
+        //     rigthx: "y"
+        // }
+        // new Executor(i)
+    }
+    {
+        type Alpha = 'A' | 'B'
+
+        function doFunc(params: Alpha) {
+        }
+
+        function doWrapFunc(params: Alpha | string) {
+            // ここでは params = Alpha | string になり、doFunc の インターフェースに合わない
+            // doFunc(params)
+
+
+            if (typeof params === 'string') {
+                return
+            }
+            doFunc(params)
+        }
+    }
+    {
+        type A = { type: 'A', value: string }
+        type B = { type: 'B', value: number }
+
+        function isANG(p: A | B) {
+            if (typeof p.value === 'string') {
+                let x = p // 合併型として推論される
+                return
+            }
+            let x = p // // 合併型として推論される
+        }
+
+        function isA(p: A | B) {
+            if (p.type === 'A') {
+                let x = p // type A として推論される
+                return
+            }
+            let x = p // // type B として推論される
+        }
+    }
+    {
+        type Alpha = 'A' | 'B' | 'C'
+        type Alpha2 = 'X' | 'Y' | 'Z'
+        function switchAplpha(a: Alpha): Alpha2 {
+            switch (a) {
+                case 'A':
+                    return 'X'
+            }
+            return 'X'
+        }
+    }
+}
