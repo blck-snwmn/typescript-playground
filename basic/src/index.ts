@@ -673,4 +673,43 @@ if (typeof u === 'number') {
         doFunc(x, 'AD')
         // doFunc(x, 'AX') // これは指定できない
     }
+    {
+        type Color = 'Red' | 'Blue' | 'Green'
+        // Record<from, to>
+        let colorCode: Record<Color, string> = {
+            // どれか１つ欠けてもNG
+            Red: "#ff0000",
+            Blue: "#0000ff",
+            Green: "#008000",
+        }
+        console.log(colorCode['Red'])
+        // console.log(colorCode['ReX']) // NG
+    }
+    {
+        type Color = 'Red' | 'Blue' | 'Green'
+        type ColorCode = '#ff0000' | '#0000ff' | '#008000'
+
+        let color2colorCode: { [K in Color]: ColorCode } = {
+            // 不足しているとNG
+            // 補完も効く
+            Red: "#ff0000",
+            Blue: "#0000ff",
+            Green: "#008000"
+        }
+        // `Green` の指定も補完が効く
+        console.log(color2colorCode['Green'])
+
+        type Board = {
+            colors: Color[]
+        }
+
+        // mapped type を用いることで、既存の型のフィールドと同じフィールド名を持ち、
+        // かつ、それぞれを optional + nullable にできる
+        // type NullableBoard = {
+        //     colors?: Color[] | null | undefined;
+        // }
+        type NullableBoard = {
+            [K in keyof Board]?: Board[K] | null
+        }
+    }
 }
