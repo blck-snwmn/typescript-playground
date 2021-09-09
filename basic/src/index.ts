@@ -646,4 +646,31 @@ if (typeof u === 'number') {
         }
         fooF(1)
     }
+    {
+        type Test = {
+            A: {
+                AB: { AC: string }
+                AC: { AX: number }
+                AD: { AZ: number[] }
+            }
+            B: {
+                BB: {}
+            }
+        }
+        type X = keyof Test
+        type XX = Test['A']
+
+        function doFunc<O extends object, K extends keyof O>(o: O, k: K) {
+            const x = o[k]
+            console.log(x)
+        }
+        let x: XX = {
+            AB: { AC: "z" },
+            AC: { AX: 1 },
+            AD: { AZ: [1, 2,] },
+        }
+        doFunc(x, 'AB')
+        doFunc(x, 'AD')
+        // doFunc(x, 'AX') // これは指定できない
+    }
 }
