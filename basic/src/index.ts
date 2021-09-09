@@ -602,4 +602,48 @@ if (typeof u === 'number') {
             return 'X'
         }
     }
+    {
+        // lookup
+        type Foo = {
+            Bar: {
+                Lists: [
+                    {
+                        Item: 1
+                    },
+                    {
+                        Item: 2
+                    }
+                ]
+            }
+        }
+
+        // {
+        //     Bar: {
+        //         Lists: [
+        //             {
+        //                 Item: 1;
+        //             },
+        //             {
+        //                 Item: 2;
+        //             }
+        //         ];
+        //     };
+        // }
+        type Foo2 = Foo['Bar']
+
+        // {
+        //     Item: 1;
+        // } | {
+        //     Item: 2;
+        // }
+        type Foo3 = Foo['Bar']['Lists'][number]
+
+        // 2 | 1
+        type Foo4 = Foo['Bar']['Lists'][number]['Item']
+
+        function fooF(p: Foo4) {
+            console.log(p)
+        }
+        fooF(1)
+    }
 }
