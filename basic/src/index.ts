@@ -495,6 +495,40 @@ if (typeof u === 'number') {
     }
 }
 {
+    class A {
+        number: number | undefined
+    }
+    class B {
+        number: number | undefined
+    }
+    let u = new A;
+    u.number = 100
+    console.log(u)
+    u = new B;
+    u.number = 12
+    console.log(u)
+}
+{
+    type Inner = {
+        name: string
+    }
+    class Test {
+        inner: Inner = { name: "" }
+        number: number = 0
+        call() {
+            console.log(this.inner, this.number)
+        }
+        static gen(i: Inner, num: number) {
+            let t = new Test;
+            t.inner = i
+            t.number = num
+            return t
+        }
+    }
+    type xxx = typeof Test;
+
+}
+{
     {
         //  (number | {
         //     x: number;
