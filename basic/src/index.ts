@@ -746,4 +746,123 @@ if (typeof u === 'number') {
             [K in keyof Board]?: Board[K] | null
         }
     }
+
+}
+{
+    // factory
+    type Animal = {
+        cry: string
+    }
+    class Dog implements Animal {
+        cry = 'woof woof'
+    }
+    class Cat implements Animal {
+        cry = 'meow'
+    }
+    type AnimalFactory = {
+        create(type: 'dog'): Dog;
+        create(type: 'cat'): Cat;
+    }
+    let Animal: AnimalFactory = {
+        create(type: 'dog' | 'cat'): Animal {
+            switch (type) {
+                case 'dog':
+                    return new Dog as Dog
+                case 'cat':
+                    return new Cat as Cat
+            }
+        }
+    }
+    let d = Animal.create('dog');
+    let c = Animal.create('cat');
+}
+{
+    // 安全なbuilderパターン
+    interface BuildableUser {
+        id: number
+        name: string
+        phoneNum: string
+        adress: string
+        hello(): void
+    }
+    class UserBuilder {
+        id?: number
+        name?: string
+        phoneNum?: string
+        adress?: string
+
+        setID(id: number): this & Pick<BuildableUser, 'id'> {
+            return Object.assign(this, { id })
+        }
+
+        setID2(id: number): this & { id: number } {
+            // これでは、これを呼びだあと、setName等を呼び出せない
+            // 以下のように変換される
+            // return Object.assign(Object.assign({}, this), { id });
+            return {
+                ...this,
+                id,
+            }
+        }
+        // これはOK
+        setID2Fix(id: number): this & { id: number } {
+            return Object.assign(this, { id })
+        }
+        setName(name: string): this & Pick<BuildableUser, 'name'> {
+            return Object.assign(this, { name })
+        }
+        setPhoneNum(phoneNum: string): this & Pick<BuildableUser, 'phoneNum'> {
+            return Object.assign(this, { phoneNum })
+        }
+        setAdress(adress: string): this & Pick<BuildableUser, 'adress'> {
+            return Object.assign(this, { adress })
+        }
+        build(this: BuildableUser) {
+            return this
+        }
+        // build の呼び出し後 
+        // this は BuildableUser になるので、interface側に定義している
+        hello(this: BuildableUser) {
+            console.log("hello `this` is ", this)
+        }
+    }
+    let b = new UserBuilder
+    let u1 = b.setID(1)
+        .setName('bob')
+        .setPhoneNum('00000000')
+        // .build() // ここでは呼べない
+        .setAdress('foobar')
+        .build()
+    u1.hello()
+
+    console.log(b.setID(2).setName)
+    console.log(b.setID2(2).setName) // undefined
+    // 以下はコンパイルエラーにはならないが実行時にエラーになる
+    // let u2 = b.setID2(2)
+    //     .setName('bob')
+    //     .setPhoneNum('00000000')
+    //     .setAdress('foobar')
+    //     .build()
+    let u2 = b.setID2Fix(2)
+        .setName('bob')
+        .setPhoneNum('00000000')
+        .setAdress('foobar')
+        .build()
+    u2.hello()
+
+    type x = Pick<BuildableUser, 'name'>
+    // P は in のあとのものに含まれるキーの文字列または数値リテラルの和集合を生成する
+    // この場合、name のみのため nameのみが抽出される
+    // これがPick
+    type xx = {
+        [P in 'name']: BuildableUser[P];
+    }
+    // hoge はないのでNG
+    // type xxf = {
+    //     [P in 'hoge']: BuildableUser[P];
+    // }
+    // 上のxx と同じ.(キーの和集合なので、型は一致している必要はないよう)
+    type xxx = {
+        [P in keyof { name: number }]: BuildableUser[P];
+    }
 }
